@@ -11,11 +11,17 @@ def kmeans(img, K=2, iters=10):
     for _ in range(iters):
         # 1) assign each pixel to its nearst centroid
         pixel_type = np.empty((img.shape[0],1), dtype=np.int32)
-        for i in range(img.shape[0]):
-            distance = np.empty((1,K))      # the distance of each centroid to each of the pixels
-            for j in range(K):
-                distance[0,j] = np.sqrt(np.sum( np.power(img[i,:] - centroids[j,:], 2) ))
-            pixel_type[i,0] = np.argmin(distance).astype(np.int32)
+        distance = np.empty((img.shape[0],K))      # the distance of each centroid to each of the pixels
+
+        # for i in range(img.shape[0]):
+        #     for j in range(K):
+        #         distance[0,j] = np.sqrt(np.sum( np.power(img[i,:] - centroids[j,:], 2) ))
+        #     pixel_type[i,0] = np.argmin(distance).astype(np.int32)
+
+        # Vectorized Method [one for loop over the centroids]
+        for j in range(K):
+            distance[:,j] = np.sqrt(np.sum(np.power(img - centroids[j,:], 2), 1))
+            pixel_type = np.argmin(distance, axis=1).astype(np.int32)
 
         # 2) calculate new centroids
         for j in range(K):
